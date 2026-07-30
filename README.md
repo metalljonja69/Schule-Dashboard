@@ -13,7 +13,8 @@ Getroffene Architekturentscheidungen: [`DECISIONS.md`](./DECISIONS.md).
 - React Router (Client-Side-Routing)
 - date-fns (Datumslogik, `de-CH`, Zeitzone `Europe/Zurich`)
 - Recharts (folgt in M3 für die ECTS-Visualisierung)
-- Persistenz: `localStorage` hinter einem Repository-Modul (folgt in M1)
+- Persistenz: `localStorage` hinter einem Repository-Modul (`StudyRepository` /
+  `localStorageRepo`), State via Context + `useReducer`
 
 ## Setup
 
@@ -28,15 +29,27 @@ npm run format     # Prettier (schreibt Änderungen)
 
 ## Datenmodell
 
-Wird ab M1 in `src/types.ts` typisiert (Modul, Termin, Projekt). Siehe `SPEC.md` für die
-Feldbeschreibung und `DECISIONS.md` für Details zu Noten-Logik, ECTS-Berechnung und
-Terminverwaltung (`expandOccurrences`).
+Typisiert in `src/types.ts`: `Modul`, `Termin`, `Projekt` (inkl. `ProjektTask`), zusammengefasst
+im Root-Objekt `AppData` mit `schemaVersion`. Siehe `SPEC.md` für die Feldbeschreibung und
+`DECISIONS.md` für Details zu Noten-Logik, ECTS-Berechnung und Terminverwaltung
+(`expandOccurrences`, folgt ab M3/M4).
+
+Der `Fortschritt in %` eines Projekts wird **nicht** gespeichert, sondern in M5 aus den
+`tasks` berechnet (`erledigt`-Anteil) — vermeidet inkonsistente Werte zwischen Tasks und
+gespeichertem Fortschritt.
+
+Persistenz läuft über `StudyRepository` (`src/lib/repository.ts`, Promise-basiert) mit der
+Implementierung `localStorageRepo` (`src/lib/localStorageRepo.ts`). Ein Root-Objekt
+`AppData` liegt unter einem localStorage-Key; `schemaVersion` wird beim Laden geprüft,
+unbekannte Versionen werden abgelehnt. Fehlen Daten beim ersten Start, werden Beispieldaten
+erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
 
 ## Stand der Umsetzung
 
 - [x] **M0** — Scaffold (Vite + React + TS + Tailwind + ESLint + Prettier), AppShell,
       Sidebar, Dark Mode als Standard (persistiert), Routing zwischen den vier Views
-- [ ] **M1** — `src/types.ts`, `StudyRepository`, `localStorageRepo`, Beispieldaten, Reset-Button
+- [x] **M1** — `src/types.ts`, `StudyRepository`, `localStorageRepo`, Beispieldaten
+      (3 Module, 4 Termine, 1 Projekt), Reset-Button, Context + `useReducer` als State-Layer
 - [ ] **M2** — Module-View (Tabelle, Filter, Inline-Bearbeitung, ECTS-Summe pro Semester)
 - [ ] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
 - [ ] **M4** — Kalender (Monatsansicht, Termin-CRUD)
@@ -44,7 +57,7 @@ Terminverwaltung (`expandOccurrences`).
 - [ ] **M6** — JSON-Backup (Export/Import), Hotkey `n`
 - [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0)
+## Was du jetzt testen kannst (M0 + M1)
 
 ```bash
 npm install
@@ -55,7 +68,13 @@ npm run dev
   sich zwischen Hell/Dunkel umschalten — die Wahl bleibt nach Reload erhalten
   (`localStorage`).
 - Die Sidebar verlinkt die vier Views **Übersicht**, **Module**, **Kalender**, **Projekte**;
-  jede zeigt aktuell einen Platzhalter, der auf den zuständigen Meilenstein verweist.
+  Module/Kalender/Projekte zeigen aktuell einen Platzhalter, der auf den zuständigen
+  Meilenstein verweist.
+- Beim ersten Aufruf erscheinen auf der **Übersicht** die Beispieldaten als Zähler
+  (3 Module, 4 Termine, 1 Projekt). Reload → Zähler bleiben gleich (Daten liegen in
+  `localStorage` unter dem Key `studien-dashboard:data`).
+- **„Beispieldaten löschen"** fragt einmal nach (Bestätigungsdialog) und setzt danach alle
+  drei Zähler auf 0 — auch nach einem Reload.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
 ## Deployment (Homeserver, Docker + Caddy)
