@@ -53,12 +53,12 @@ erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
 - [x] **M2** — Module-View (Tabelle, Filter nach Semester/Status, Inline-Bearbeitung,
       ECTS-Summe pro Semester, Modul hinzufügen/löschen)
 - [x] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
-- [ ] **M4** — Kalender (Monatsansicht, Termin-CRUD)
+- [x] **M4** — Kalender (Monatsansicht, Termin-CRUD)
 - [ ] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
 - [ ] **M6** — JSON-Backup (Export/Import), Hotkey `n`
 - [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0–M3)
+## Was du jetzt testen kannst (M0–M4)
 
 ```bash
 npm install
@@ -69,7 +69,7 @@ npm run dev
   sich zwischen Hell/Dunkel umschalten — die Wahl bleibt nach Reload erhalten
   (`localStorage`).
 - Die Sidebar verlinkt die vier Views **Übersicht**, **Module**, **Kalender**, **Projekte**;
-  Kalender/Projekte zeigen aktuell noch einen Platzhalter.
+  Projekte zeigt aktuell noch einen Platzhalter.
 - Beim ersten Aufruf erscheinen auf der **Übersicht** die Beispieldaten als Zähler
   (3 Module, 4 Termine, 1 Projekt). Reload → Zähler bleiben gleich (Daten liegen in
   `localStorage` unter dem Key `studien-dashboard:data`).
@@ -86,6 +86,10 @@ npm run dev
   laufenden Module mit Note einfliessen) sowie die farbcodierte Liste „Nächste 14 Tage"
   (Termine + Projekt-Deadlines, sortiert). Fällt ein Termin/eine Deadline in die nächsten
   3 Tage, erscheint oben ein Warnbanner.
+- Der **Kalender** zeigt ein eigenes Monatsraster (Woche startet Montag), Navigation über
+  ←/→/„Heute". Ein Klick auf einen Tag öffnet die Termine dieses Tages; „+ Termin" legt
+  einen neuen an (Titel, Datum/Zeit, Typ, optionales Modul, Ort, Notiz), ein bestehender
+  Termin lässt sich anklicken zum Bearbeiten oder Löschen. Alles reload-fest.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
 ## Deployment (Homeserver, Docker + Caddy)
