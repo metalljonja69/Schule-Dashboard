@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { EctsRing } from '../components/EctsRing';
 import { useStudyData } from '../context/StudyDataContext';
+import { exportiereAlsDatei, parseImportiertesJson } from '../lib/backup';
 import { formatiereDatumZeit } from '../lib/datetime';
 import { berechneNotendurchschnitt } from '../lib/grades';
 import { expandOccurrences } from '../lib/occurrences';
@@ -19,8 +20,10 @@ interface ListenEintrag {
 }
 
 export function OverviewView() {
-  const { data, resetData } = useStudyData();
+  const { data, updateData, resetData } = useStudyData();
   const [nurBestandene, setNurBestandene] = useState(false);
+  const [importFehler, setImportFehler] = useState<string | null>(null);
+  const dateiInputRef = useRef<HTMLInputElement>(null);
 
   function handleReset() {
     const bestaetigt = window.confirm(
@@ -28,6 +31,28 @@ export function OverviewView() {
     );
     if (bestaetigt) {
       resetData();
+    }
+  }
+
+  function handleExport() {
+    exportiereAlsDatei(data);
+  }
+
+  async function handleImportDatei(e: ChangeEvent<HTMLInputElement>) {
+    const datei = e.target.files?.[0];
+    e.target.value = '';
+    if (!datei) return;
+
+    try {
+      const importiert = parseImportiertesJson(await datei.text());
+      const bestaetigt = window.confirm(
+        'Import ersetzt alle aktuellen Module, Termine und Projekte. Fortfahren?',
+      );
+      if (!bestaetigt) return;
+      updateData(importiert);
+      setImportFehler(null);
+    } catch (error) {
+      setImportFehler(error instanceof Error ? error.message : 'Unbekannter Fehler beim Import.');
     }
   }
 
@@ -191,13 +216,39 @@ export function OverviewView() {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleReset}
-          className="mt-4 w-full rounded-md border border-red-300 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
-        >
-          Beispieldaten löschen
-        </button>
+        <div className="mt-4 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={handleExport}
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700"
+          >
+            Daten exportieren (JSON)
+          </button>
+
+          <button
+            type="button"
+            onClick={() => dateiInputRef.current?.click()}
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700"
+          >
+            Daten importieren (JSON)
+          </button>
+          <input
+            ref={dateiInputRef}
+            type="file"
+            accept="application/json"
+            onChange={handleImportDatei}
+            className="hidden"
+          />
+          {importFehler && <p className="text-xs text-red-500">{importFehler}</p>}
+
+          <button
+            type="button"
+            onClick={handleReset}
+            className="w-full rounded-md border border-red-300 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
+          >
+            Beispieldaten löschen
+          </button>
+        </div>
       </section>
     </div>
   );

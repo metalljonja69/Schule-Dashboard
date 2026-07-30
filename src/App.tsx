@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
+import { QuickAddTermin } from './components/QuickAddTermin';
 import { OverviewView } from './views/OverviewView';
 import { ModulesView } from './views/ModulesView';
 import { CalendarView } from './views/CalendarView';
@@ -14,6 +15,7 @@ function App() {
         <Route path="/kalender" element={<CalendarView />} />
         <Route path="/projekte" element={<ProjectsView />} />
       </Routes>
+      <QuickAddTermin />
     </AppShell>
   );
 }

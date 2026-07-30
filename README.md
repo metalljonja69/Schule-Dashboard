@@ -55,10 +55,10 @@ erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
 - [x] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
 - [x] **M4** — Kalender (Monatsansicht, Termin-CRUD)
 - [x] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
-- [ ] **M6** — JSON-Backup (Export/Import), Hotkey `n`
+- [x] **M6** — JSON-Backup (Export/Import), Hotkey `n`
 - [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0–M5)
+## Was du jetzt testen kannst (M0–M6)
 
 ```bash
 npm install
@@ -94,6 +94,13 @@ npm run dev
   (nicht gespeichert). Klick auf eine Karte öffnet Titel/Deadline/Modul/Status/Tasks zum
   Bearbeiten; „← ”/„→ ”-Buttons verschieben ein Projekt direkt in die Nachbarspalte;
   „+ Projekt" pro Spalte legt ein neues mit passendem Status an.
+- Auf der **Übersicht** ganz unten: „Daten exportieren (JSON)" lädt ein Backup mit Zeitstempel
+  im Dateinamen herunter. „Daten importieren (JSON)" liest eine Datei ein, prüft
+  `schemaVersion` (unbekannte Version → Fehlermeldung, kein Datenverlust) und fragt vor dem
+  Ersetzen aller Daten einmal nach.
+- Taste **`n`** (ausserhalb von Eingabefeldern) öffnet von jeder View aus die
+  Termin-Schnellanlage. `Cmd/Ctrl+K` ist reserviert für eine spätere Command Palette, tut
+  aktuell bewusst nichts.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
 ## Deployment (Homeserver, Docker + Caddy)
