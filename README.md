@@ -31,12 +31,12 @@ npm run format     # Prettier (schreibt Änderungen)
 
 Typisiert in `src/types.ts`: `Modul`, `Termin`, `Projekt` (inkl. `ProjektTask`), zusammengefasst
 im Root-Objekt `AppData` mit `schemaVersion`. Siehe `SPEC.md` für die Feldbeschreibung und
-`DECISIONS.md` für Details zu Noten-Logik, ECTS-Berechnung und Terminverwaltung
-(`expandOccurrences`, folgt ab M3/M4).
+`DECISIONS.md` für Details zu Noten-Logik, ECTS-Berechnung und Terminverwaltung. Alle
+Lesezugriffe auf Termine laufen über `expandOccurrences()` (`src/lib/occurrences.ts`).
 
-Der `Fortschritt in %` eines Projekts wird **nicht** gespeichert, sondern in M5 aus den
-`tasks` berechnet (`erledigt`-Anteil) — vermeidet inkonsistente Werte zwischen Tasks und
-gespeichertem Fortschritt.
+Der `Fortschritt in %` eines Projekts wird **nicht** gespeichert, sondern aus den `tasks`
+berechnet (`erledigt`-Anteil, `src/lib/projects.ts`) — vermeidet inkonsistente Werte
+zwischen Tasks und gespeichertem Fortschritt.
 
 Persistenz läuft über `StudyRepository` (`src/lib/repository.ts`, Promise-basiert) mit der
 Implementierung `localStorageRepo` (`src/lib/localStorageRepo.ts`). Ein Root-Objekt
@@ -56,9 +56,13 @@ erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
 - [x] **M4** — Kalender (Monatsansicht, Termin-CRUD)
 - [x] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
 - [x] **M6** — JSON-Backup (Export/Import), Hotkey `n`
-- [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
+- [x] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0–M6)
+Alle Meilensteine aus `DECISIONS.md` sind damit umgesetzt. Was als Nächstes offen bleibt,
+steht in `SPEC.md` unter „Später" (`.ics`-Import, Notenrechner, PDF-Export) — bewusst noch
+nicht gebaut, aber die Architektur (`expandOccurrences`, `StudyRepository`) ist dafür offen.
+
+## Was du testen kannst
 
 ```bash
 npm install
@@ -101,7 +105,11 @@ npm run dev
 - Taste **`n`** (ausserhalb von Eingabefeldern) öffnet von jeder View aus die
   Termin-Schnellanlage. `Cmd/Ctrl+K` ist reserviert für eine spätere Command Palette, tut
   aktuell bewusst nichts.
-- `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
+- **Empty States:** Nach „Beispieldaten löschen" zeigen alle vier Views einen sinnvollen
+  Leerzustand (0%-Ring, „Keine Module für diese Filter.", „Keine Termine an diesem Tag.",
+  „Keine Projekte") statt Fehlern oder leeren Flächen.
+- `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen;
+  `npm run preview` zeigt den echten Produktions-Build (nicht den Dev-Server).
 
 ## Deployment (Homeserver, Docker + Caddy)
 
@@ -140,12 +148,24 @@ durchlaufen — der Sandbox-Container hier kann keinen eigenen Docker-Daemon sta
 fehlerfrei durch, Dockerfile und Caddyfile folgen Standard-Mustern; bitte einmal
 `docker compose up -d --build` auf dem Homeserver verifizieren.
 
-## Hinweis: `react-router-dom` und `npm audit`
+## Bekannte Einschränkungen
 
-`npm audit` meldet für `react-router-dom` aktuell High-Severity-Advisories (u.a. RSC-Mode-
-CSRF, SSR-XSS). Diese betreffen ausschliesslich Server-Rendering/RSC/Data-Router-Features,
-die hier nicht genutzt werden (reines Client-Side-SPA-Routing mit `BrowserRouter`, statischer
-Build ohne SSR). Es existiert aktuell keine als "sauber" markierte Version im 7.x-Bereich;
-ein Downgrade auf die letzte unbetroffene Version (`7.11.0`) würde neuere Bugfixes verlieren,
-ohne unser Risiko zu senken. Empfehlung: bei der aktuellen Version (`^7.18.2`) bleiben und bei
-Gelegenheit `npm audit` erneut prüfen, statt jetzt zu downgraden.
+- **`react-router-dom` und `npm audit`:** `npm audit` meldet aktuell High-Severity-Advisories
+  (u. a. RSC-Mode-CSRF, SSR-XSS). Diese betreffen ausschliesslich Server-Rendering/RSC/
+  Data-Router-Features, die hier nicht genutzt werden (reines Client-Side-SPA-Routing mit
+  `BrowserRouter`, statischer Build ohne SSR). Es existiert aktuell keine als "sauber"
+  markierte Version im 7.x-Bereich; ein Downgrade auf `7.11.0` würde neuere Bugfixes
+  verlieren, ohne das reale Risiko zu senken. Bei der aktuellen Version (`^7.18.2`) bleiben
+  und `npm audit` bei Gelegenheit erneut prüfen.
+- **Bundle-Grösse:** Der Produktions-Build meldet einen Chunk über 500 KB (Recharts macht
+  den Löwenanteil aus). Für eine Single-User-App ohne Ladezeit-Anforderungen unkritisch;
+  Code-Splitting bewusst nicht umgesetzt, da kein Bedarf besteht.
+- **Reine Smartphone-Breiten (< ca. 500px):** Die Sidebar ist fix 240px breit (kein
+  Hamburger-Menü). Bei sehr schmalen Viewports braucht der Hauptinhalt horizontales
+  Scrollen innerhalb der Fläche rechts von der Sidebar. Das entspricht der SPEC-Vorgabe
+  „Responsive, aber für Desktop optimiert" — ab Tablet-Breite (~768px) aufwärts sieht die
+  App vollständig aus, ohne Scrollen.
+- **Datums-/Zeit-Inputs:** `<input type="date">`/`type="time">` zeigen ihr natives Format
+  je nach Betriebssystem-Locale des Browsers an (z. B. `MM/DD/YYYY` unter US-Locale). Der
+  gespeicherte Wert ist davon unabhängig immer ISO-basiert; unter einer Schweizer
+  System-Locale erscheinen die Felder automatisch im gewohnten Format.

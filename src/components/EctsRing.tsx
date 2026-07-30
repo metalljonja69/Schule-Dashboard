@@ -23,7 +23,7 @@ export function EctsRing({ erreichtEcts, laufendEcts }: EctsRingProps) {
   ];
 
   return (
-    <div className="relative mx-auto h-48 w-48">
+    <div className="relative mx-auto h-32 w-32 sm:h-48 sm:w-48">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -44,7 +44,7 @@ export function EctsRing({ erreichtEcts, laufendEcts }: EctsRingProps) {
         </PieChart>
       </ResponsiveContainer>
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-semibold">{prozent}%</span>
+        <span className="text-2xl font-semibold sm:text-3xl">{prozent}%</span>
         <span className="text-xs text-slate-500 dark:text-slate-400">
           {erreichtEcts}/{GESAMT_ECTS} ECTS
         </span>
