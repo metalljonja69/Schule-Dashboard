@@ -54,11 +54,11 @@ erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
       ECTS-Summe pro Semester, Modul hinzufügen/löschen)
 - [x] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
 - [x] **M4** — Kalender (Monatsansicht, Termin-CRUD)
-- [ ] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
+- [x] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
 - [ ] **M6** — JSON-Backup (Export/Import), Hotkey `n`
 - [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0–M4)
+## Was du jetzt testen kannst (M0–M5)
 
 ```bash
 npm install
@@ -68,8 +68,7 @@ npm run dev
 - Die App startet im **Dark Mode** (Standard). Über den Button unten in der Sidebar lässt
   sich zwischen Hell/Dunkel umschalten — die Wahl bleibt nach Reload erhalten
   (`localStorage`).
-- Die Sidebar verlinkt die vier Views **Übersicht**, **Module**, **Kalender**, **Projekte**;
-  Projekte zeigt aktuell noch einen Platzhalter.
+- Die Sidebar verlinkt die vier Views **Übersicht**, **Module**, **Kalender**, **Projekte**.
 - Beim ersten Aufruf erscheinen auf der **Übersicht** die Beispieldaten als Zähler
   (3 Module, 4 Termine, 1 Projekt). Reload → Zähler bleiben gleich (Daten liegen in
   `localStorage` unter dem Key `studien-dashboard:data`).
@@ -90,6 +89,11 @@ npm run dev
   ←/→/„Heute". Ein Klick auf einen Tag öffnet die Termine dieses Tages; „+ Termin" legt
   einen neuen an (Titel, Datum/Zeit, Typ, optionales Modul, Ort, Notiz), ein bestehender
   Termin lässt sich anklicken zum Bearbeiten oder Löschen. Alles reload-fest.
+- **Projekte** zeigt drei Kanban-Spalten (Geplant/Laufend/Abgeschlossen). Jede Karte zeigt
+  Modul, Deadline und einen Fortschrittsbalken, der aus den erledigten Tasks berechnet wird
+  (nicht gespeichert). Klick auf eine Karte öffnet Titel/Deadline/Modul/Status/Tasks zum
+  Bearbeiten; „← ”/„→ ”-Buttons verschieben ein Projekt direkt in die Nachbarspalte;
+  „+ Projekt" pro Spalte legt ein neues mit passendem Status an.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
 ## Deployment (Homeserver, Docker + Caddy)
