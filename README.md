@@ -73,6 +73,9 @@ npm run dev
   sich zwischen Hell/Dunkel umschalten — die Wahl bleibt nach Reload erhalten
   (`localStorage`).
 - Die Sidebar verlinkt die vier Views **Übersicht**, **Module**, **Kalender**, **Projekte**.
+  Unterhalb von `md` (~768px, z. B. Smartphone) ist die Sidebar standardmässig ausgeblendet;
+  ein ☰-Button oben links öffnet sie als Overlay mit abgedunkeltem Hintergrund, ein Klick auf
+  einen Menüpunkt oder den Hintergrund schliesst sie wieder.
 - Beim ersten Aufruf erscheinen auf der **Übersicht** die Beispieldaten als Zähler
   (3 Module, 4 Termine, 1 Projekt). Reload → Zähler bleiben gleich (Daten liegen in
   `localStorage` unter dem Key `studien-dashboard:data`).
@@ -160,11 +163,11 @@ fehlerfrei durch, Dockerfile und Caddyfile folgen Standard-Mustern; bitte einmal
 - **Bundle-Grösse:** Der Produktions-Build meldet einen Chunk über 500 KB (Recharts macht
   den Löwenanteil aus). Für eine Single-User-App ohne Ladezeit-Anforderungen unkritisch;
   Code-Splitting bewusst nicht umgesetzt, da kein Bedarf besteht.
-- **Reine Smartphone-Breiten (< ca. 500px):** Die Sidebar ist fix 240px breit (kein
-  Hamburger-Menü). Bei sehr schmalen Viewports braucht der Hauptinhalt horizontales
-  Scrollen innerhalb der Fläche rechts von der Sidebar. Das entspricht der SPEC-Vorgabe
-  „Responsive, aber für Desktop optimiert" — ab Tablet-Breite (~768px) aufwärts sieht die
-  App vollständig aus, ohne Scrollen.
+- **Modul-Tabelle auf Smartphone-Breiten:** Die Tabelle auf der Module-Seite bleibt eine
+  echte Tabelle (nicht in Karten umgebaut) und scrollt bei sehr schmalen Viewports
+  horizontal innerhalb ihres eigenen Rahmens. Der Kalender bleibt ein 7-Spalten-Raster
+  (kleinere Zellen statt Umbruch). Beides ist bewusst so belassen, passend zur SPEC-Vorgabe
+  „Responsive, aber für Desktop optimiert".
 - **Datums-/Zeit-Inputs:** `<input type="date">`/`type="time">` zeigen ihr natives Format
   je nach Betriebssystem-Locale des Browsers an (z. B. `MM/DD/YYYY` unter US-Locale). Der
   gespeicherte Wert ist davon unabhängig immer ISO-basiert; unter einer Schweizer

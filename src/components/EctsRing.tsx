@@ -23,7 +23,7 @@ export function EctsRing({ erreichtEcts, laufendEcts }: EctsRingProps) {
   ];
 
   return (
-    <div className="relative mx-auto h-32 w-32 sm:h-48 sm:w-48">
+    <div className="relative mx-auto h-40 w-40 sm:h-48 sm:w-48">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
