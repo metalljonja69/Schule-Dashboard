@@ -50,14 +50,15 @@ erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
       Sidebar, Dark Mode als Standard (persistiert), Routing zwischen den vier Views
 - [x] **M1** — `src/types.ts`, `StudyRepository`, `localStorageRepo`, Beispieldaten
       (3 Module, 4 Termine, 1 Projekt), Reset-Button, Context + `useReducer` als State-Layer
-- [ ] **M2** — Module-View (Tabelle, Filter, Inline-Bearbeitung, ECTS-Summe pro Semester)
+- [x] **M2** — Module-View (Tabelle, Filter nach Semester/Status, Inline-Bearbeitung,
+      ECTS-Summe pro Semester, Modul hinzufügen/löschen)
 - [ ] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
 - [ ] **M4** — Kalender (Monatsansicht, Termin-CRUD)
 - [ ] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
 - [ ] **M6** — JSON-Backup (Export/Import), Hotkey `n`
 - [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0 + M1)
+## Was du jetzt testen kannst (M0 + M1 + M2)
 
 ```bash
 npm install
@@ -68,13 +69,17 @@ npm run dev
   sich zwischen Hell/Dunkel umschalten — die Wahl bleibt nach Reload erhalten
   (`localStorage`).
 - Die Sidebar verlinkt die vier Views **Übersicht**, **Module**, **Kalender**, **Projekte**;
-  Module/Kalender/Projekte zeigen aktuell einen Platzhalter, der auf den zuständigen
-  Meilenstein verweist.
+  Kalender/Projekte zeigen aktuell noch einen Platzhalter.
 - Beim ersten Aufruf erscheinen auf der **Übersicht** die Beispieldaten als Zähler
   (3 Module, 4 Termine, 1 Projekt). Reload → Zähler bleiben gleich (Daten liegen in
   `localStorage` unter dem Key `studien-dashboard:data`).
 - **„Beispieldaten löschen"** fragt einmal nach (Bestätigungsdialog) und setzt danach alle
   drei Zähler auf 0 — auch nach einem Reload.
+- Auf **Module** lassen sich Name/Code/ECTS/Semester/Status/Note/Dozent direkt in der
+  Tabelle bearbeiten (Änderungen werden sofort gespeichert, auch reload-fest). Filter nach
+  Semester und Status oben; darunter die ECTS-Summe je Semester für die aktuell gefilterte
+  Ansicht. „+ Modul hinzufügen" legt eine leere Zeile an (übernimmt aktive Filter als
+  Vorgabewerte), „Löschen" pro Zeile fragt einmal nach.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
 ## Deployment (Homeserver, Docker + Caddy)
