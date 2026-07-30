@@ -12,7 +12,7 @@ Getroffene Architekturentscheidungen: [`DECISIONS.md`](./DECISIONS.md).
 - Tailwind CSS v4
 - React Router (Client-Side-Routing)
 - date-fns (Datumslogik, `de-CH`, Zeitzone `Europe/Zurich`)
-- Recharts (folgt in M3 für die ECTS-Visualisierung)
+- Recharts (ECTS-Ring auf der Übersicht)
 - Persistenz: `localStorage` hinter einem Repository-Modul (`StudyRepository` /
   `localStorageRepo`), State via Context + `useReducer`
 
@@ -52,13 +52,13 @@ erzeugt (`src/lib/sampleData.ts`: 3 Module, 4 Termine, 1 Projekt).
       (3 Module, 4 Termine, 1 Projekt), Reset-Button, Context + `useReducer` als State-Layer
 - [x] **M2** — Module-View (Tabelle, Filter nach Semester/Status, Inline-Bearbeitung,
       ECTS-Summe pro Semester, Modul hinzufügen/löschen)
-- [ ] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
+- [x] **M3** — Übersicht (ECTS-Ring, Kacheln, „Nächste 14 Tage", Deadline-Warnung)
 - [ ] **M4** — Kalender (Monatsansicht, Termin-CRUD)
 - [ ] **M5** — Projekte (Kanban-Spalten, Fortschritt aus Tasks)
 - [ ] **M6** — JSON-Backup (Export/Import), Hotkey `n`
 - [ ] **M7** — README-Feinschliff, Empty States, Responsive-Durchgang, Production-Build-Check
 
-## Was du jetzt testen kannst (M0 + M1 + M2)
+## Was du jetzt testen kannst (M0–M3)
 
 ```bash
 npm install
@@ -80,6 +80,12 @@ npm run dev
   Semester und Status oben; darunter die ECTS-Summe je Semester für die aktuell gefilterte
   Ansicht. „+ Modul hinzufügen" legt eine leere Zeile an (übernimmt aktive Filter als
   Vorgabewerte), „Löschen" pro Zeile fragt einmal nach.
+- Auf der **Übersicht** siehst du jetzt den ECTS-Ring (erreicht = bestandene ECTS, heller
+  Segmentanteil = laufende ECTS, Prozentwert bezogen auf 180 ECTS), Kacheln für laufende
+  Module/offene Projekte/Notendurchschnitt (Toggle „nur bestandene", Hinweis wie viele
+  laufenden Module mit Note einfliessen) sowie die farbcodierte Liste „Nächste 14 Tage"
+  (Termine + Projekt-Deadlines, sortiert). Fällt ein Termin/eine Deadline in die nächsten
+  3 Tage, erscheint oben ein Warnbanner.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
 ## Deployment (Homeserver, Docker + Caddy)
