@@ -1,0 +1,11 @@
+services:
+  studien-dashboard:
+    build: .
+    container_name: studien-dashboard
+    restart: unless-stopped
+    ports:
+      # Erreichbar über die Tailscale-IP des Homeservers: http://<tailscale-ip>:8080
+      # Falls der Host zusätzlich eine öffentliche Netzwerkschnittstelle hat, auf
+      # "127.0.0.1:8080:8080" einschränken und stattdessen `tailscale serve` nutzen
+      # (siehe README, Abschnitt Deployment).
+      - '8080:8080'

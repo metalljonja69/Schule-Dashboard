@@ -58,6 +58,43 @@ npm run dev
   jede zeigt aktuell einen Platzhalter, der auf den zuständigen Meilenstein verweist.
 - `npm run build` sollte ohne Typfehler durchlaufen und einen `dist/`-Ordner erzeugen.
 
+## Deployment (Homeserver, Docker + Caddy)
+
+Der Container baut den Produktions-Build und liefert ihn über Caddy als statische Dateien
+aus (`Dockerfile`, `Caddyfile`, `docker-compose.yml`).
+
+```bash
+docker compose up -d --build
+```
+
+Danach ist die App unter `http://<tailscale-ip-des-homeservers>:8080` erreichbar — der
+Port wird per Docker auf allen Netzwerkschnittstellen des Hosts veröffentlicht, also auch
+über die Tailscale-Schnittstelle, ohne dass zusätzlich etwas eingerichtet werden muss.
+
+**Falls der Homeserver zusätzlich eine öffentlich erreichbare Netzwerkschnittstelle hat**
+(z. B. direkt am Router mit Portweiterleitung), sollte der Port nicht offen auf `0.0.0.0`
+liegen. Zwei Optionen:
+
+- In `docker-compose.yml` die Portzuordnung auf `"127.0.0.1:8080:8080"` einschränken und
+  stattdessen [`tailscale serve`](https://tailscale.com/kb/1242/tailscale-serve) verwenden:
+  `tailscale serve --bg 8080` macht den Dienst dann ausschliesslich innerhalb des
+  Tailnets erreichbar (inkl. TLS über den `.ts.net`-Namen).
+- Oder die Firewall/den Router so konfigurieren, dass Port 8080 nicht von aussen erreichbar
+  ist.
+
+**Update nach neuem Commit:**
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+**Hinweis zum Testen:** Der Docker-Build wurde in dieser Umgebung nicht end-to-end
+durchlaufen — der Sandbox-Container hier kann keinen eigenen Docker-Daemon starten
+(kein privilegiertes Docker-in-Docker). `npm run build` (Basis des Image-Builds) läuft
+fehlerfrei durch, Dockerfile und Caddyfile folgen Standard-Mustern; bitte einmal
+`docker compose up -d --build` auf dem Homeserver verifizieren.
+
 ## Hinweis: `react-router-dom` und `npm audit`
 
 `npm audit` meldet für `react-router-dom` aktuell High-Severity-Advisories (u.a. RSC-Mode-
